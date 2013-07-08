@@ -73,7 +73,7 @@ namespace NServiceBus.Timeout.Core
                 Headers.Remove(OriginalReplyToAddress);
             }
 
-            var transportMessage = new TransportMessage(Id,Headers)
+            var transportMessage = new TransportMessage(Id, Headers)
             {
                 ReplyToAddress = replyToAddress,
                 Recoverable = true,
@@ -81,12 +81,13 @@ namespace NServiceBus.Timeout.Core
                 Body = State
             };
 
+            //We need to reset the TimeSent otherwise the SLAs are calculated incorrectly
+            transportMessage.Headers[NServiceBus.Headers.TimeSent] = DateTimeExtensions.ToWireFormattedString(DateTime.UtcNow);
 
             if (SagaId != Guid.Empty)
             {
                 transportMessage.Headers[NServiceBus.Headers.SagaId] = SagaId.ToString();
             }
-
 
             transportMessage.Headers["NServiceBus.RelatedToTimeoutId"] = Id;
 

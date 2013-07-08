@@ -44,7 +44,7 @@ namespace NServiceBus.Unicast.Monitoring
         void UpdateCounters(DateTime timeSent, DateTime processingStarted, DateTime processingEnded)
         {
             if(CriticalTimeCounter != null)
-                CriticalTimeCounter.Update(timeSent, processingStarted,processingEnded);
+                CriticalTimeCounter.Update(timeSent, processingStarted, processingEnded);
 
 
             if (EstimatedTimeToSLABreachCalculator != null)
