@@ -1,3 +1,5 @@
+using NServiceBus.Unicast;
+
 namespace SqlPublisher
 {
     using NServiceBus;
@@ -9,4 +11,5 @@ namespace SqlPublisher
 	public class EndpointConfig : IConfigureThisEndpoint, AsA_Publisher, UsingTransport<SqlServer>
 	{
     }
+
 }

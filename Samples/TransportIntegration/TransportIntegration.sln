@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsmqPublisher", "MsmqPublis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events", "Events\Events.csproj", "{77670CC2-DC46-4891-BC1F-A80F9F54BC48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTransportBridge", "SqlTransportBridge\SqlTransportBridge.csproj", "{289612EF-32FC-44E6-9C8D-4A562AEE0538}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlPublisher", "SqlPublisher\SqlPublisher.csproj", "{967098EC-92E4-45F1-AB97-9EA41B85850D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnobtrusiveConventions", "UnobtrusiveConventions\UnobtrusiveConventions.csproj", "{4712753C-9190-4E66-B7BF-B834A8BF3CCC}"
@@ -27,10 +25,6 @@ Global
 		{77670CC2-DC46-4891-BC1F-A80F9F54BC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77670CC2-DC46-4891-BC1F-A80F9F54BC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77670CC2-DC46-4891-BC1F-A80F9F54BC48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{289612EF-32FC-44E6-9C8D-4A562AEE0538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{289612EF-32FC-44E6-9C8D-4A562AEE0538}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{289612EF-32FC-44E6-9C8D-4A562AEE0538}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{289612EF-32FC-44E6-9C8D-4A562AEE0538}.Release|Any CPU.Build.0 = Release|Any CPU
 		{967098EC-92E4-45F1-AB97-9EA41B85850D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{967098EC-92E4-45F1-AB97-9EA41B85850D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{967098EC-92E4-45F1-AB97-9EA41B85850D}.Release|Any CPU.ActiveCfg = Release|Any CPU
