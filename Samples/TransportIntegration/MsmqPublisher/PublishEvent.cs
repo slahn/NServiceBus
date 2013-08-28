@@ -1,14 +1,14 @@
-﻿using System;
-using Events;
-
+﻿
 namespace MsmqPublisher
 {
+    using System;
+    using Events;
     using NServiceBus;
 
     /// <summary>
-    /// Class to facilitate events to be published in order to verify that they are received by the Sql endpoint
+    /// Bootstrapper that facilitates testing by publishing an event every time Enter is pressed
     /// </summary>
-    public class Bootstrapper : IWantToRunWhenBusStartsAndStops
+    public class PublishEvent : IWantToRunWhenBusStartsAndStops
     {
         public IBus Bus { get; set; }
         public void Start()

@@ -7,8 +7,8 @@
     <ProjectGuid>{967098EC-92E4-45F1-AB97-9EA41B85850D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SqlPublisher</RootNamespace>
-    <AssemblyName>SqlPublisher</AssemblyName>
+    <RootNamespace>SqlBridge</RootNamespace>
+    <AssemblyName>SqlBridge</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -57,8 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrapper.cs" />
     <Compile Include="EndpointConfig.cs" />
+    <Compile Include="MsmqReceiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

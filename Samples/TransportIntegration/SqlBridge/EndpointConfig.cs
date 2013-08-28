@@ -1,6 +1,4 @@
-using NServiceBus.Unicast;
-
-namespace SqlPublisher
+namespace SqlBridge
 {
     using NServiceBus;
 
