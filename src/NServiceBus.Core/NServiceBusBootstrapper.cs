@@ -2,19 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using System.Security.Principal;
+    using System.Text;
+    using System.Web;
     using Autofac;
-    using Autofac.Core;
     using Config.ConfigurationSource;
     using Config.Conventions;
     using Faults;
     using Faults.Forwarder;
+    using Hosting.Helpers;
     using Licensing;
+    using Logging;
     using Unicast;
     using Unicast.Transport;
     using Utils.Reflection;
+    using Parameter = Autofac.Core.Parameter;
 
     public abstract class Configurator
     {
@@ -28,7 +34,6 @@
         public virtual void InitializeDefaults() { }
         public virtual void RegisterTypes() { }
         public virtual void BeforeFinalizingConfiguration() { }
-        public virtual void AfterConfigurationIsFinalized() { }
         public virtual void FinalizeConfiguration() { }
 
         //TODO:extension method
@@ -160,9 +165,54 @@
         ITransport transport;
         Address address;
 
+        public static IEnumerable<Assembly> GetAssembliesInDirectory(string path)
+        {
+            var assemblyScanner = new AssemblyScanner(path);
+            assemblyScanner.MustReferenceAtLeastOneAssembly.Add(typeof(IHandleMessages<>).Assembly);
+            
+            return assemblyScanner
+                .GetScannableAssemblies()
+                .Assemblies;
+        }
+
+        static List<Type> GetAllowedTypes(params Assembly[] assemblies)
+        {
+            var types = new List<Type>();
+            Array.ForEach(
+                assemblies,
+                a =>
+                {
+                    try
+                    {
+                        types.AddRange(a.GetTypes()
+                                        .Where(AssemblyScanner.IsAllowedType));
+                    }
+                    catch (ReflectionTypeLoadException e)
+                    {
+                        var errorMessage = AssemblyScanner.FormatReflectionTypeLoadException(a.FullName, e);
+                        LogManager.GetLogger(typeof(Configure)).Warn(errorMessage);
+                        //intentionally swallow exception
+                    }
+                });
+            return types;
+        }
+
         public Bus2(NServiceBusBootstrapper bootstrapper)
         {
             LicenseManager.PromptUserForLicenseIfTrialHasExpired();
+
+            if (bootstrapper["scan.types"] != null)
+            {
+                TypesToScan = (IList<Type>) bootstrapper["scan.types"];
+            }
+            else if (bootstrapper["scan.assemblies"] != null)
+            {
+                TypesToScan = GetAllowedTypes((Assembly[])bootstrapper["scan.assemblies"]);
+            }
+            else
+            {
+                TypesToScan = GetAllowedTypes(GetAssembliesInDirectory((string)bootstrapper["scan.directory"]).ToArray());
+            }
 
             var builder = new ContainerBuilder();
             builder.RegisterType<UnicastBus>().SingleInstance().PropertiesAutowired();
@@ -172,7 +222,78 @@
             container = builder.Build();
             
             address = Address.Parse(bootstrapper.GetLocalAddressName());
+
+            ActivateAndInvoke<Configurator>(c =>
+            {
+                c.SetContainer(container);
+                c.TypesToScan = TypesToScan;
+
+                c.InitializeDefaults();
+                c.RegisterTypes();
+                c.BeforeFinalizingConfiguration();
+                c.FinalizeConfiguration();
+            });
         }
+
+        void ForAllTypes<T>(Action<Type> action) where T : class
+        {
+            TypesToScan.Where(t => typeof(T).IsAssignableFrom(t) && !(t.IsAbstract || t.IsInterface))
+              .ToList().ForEach(action);
+        }
+
+        void ActivateAndInvoke<T>(Action<T> action, TimeSpan? thresholdForWarning = null) where T : class
+        {
+            if (!thresholdForWarning.HasValue)
+                thresholdForWarning = TimeSpan.FromSeconds(5);
+
+            var totalTime = new Stopwatch();
+
+            totalTime.Start();
+
+            var details = new List<Tuple<Type, TimeSpan>>();
+
+            ForAllTypes<T>(t =>
+            {
+                var sw = new Stopwatch();
+
+                sw.Start();
+                var instanceToInvoke = (T)Activator.CreateInstance(t);
+                action(instanceToInvoke);
+                sw.Stop();
+
+                details.Add(new Tuple<Type, TimeSpan>(t, sw.Elapsed));
+            });
+
+            totalTime.Stop();
+
+            var message = string.Format("Invocation of {0} completed in {1:f2} s", typeof(T).FullName, totalTime.Elapsed.TotalSeconds);
+
+            var logAsWarn = details.Any(d => d.Item2 > thresholdForWarning);
+
+            var detailsMessage = new StringBuilder();
+
+            detailsMessage.AppendLine(" - Details:");
+
+            foreach (var detail in details.OrderByDescending(d => d.Item2))
+            {
+                detailsMessage.AppendLine(string.Format("{0} - {1:f4} s", detail.Item1.FullName, detail.Item2.TotalSeconds));
+            }
+
+
+            if (logAsWarn)
+            {
+                Logger.Warn(message + detailsMessage);
+            }
+            else
+            {
+                Logger.Info(message);
+                Logger.Debug(detailsMessage.ToString());
+            }
+        }
+
+        ILog Logger = LogManager.GetLogger(typeof(Bus2));
+
+        public IList<Type> TypesToScan { get; private set; }
 
         public void Start()
         {
@@ -185,7 +306,6 @@
             transport.FinishedMessageProcessing += TransportFinishedMessageProcessing;
             transport.FailedMessageProcessing += TransportFailedMessageProcessing;
             transport.Start(address);
-            
         }
 
         public void Dispose()
@@ -230,12 +350,55 @@
 
     public abstract class NServiceBusBootstrapper
     {
-        public void With()
+        private Dictionary<string, object> data = new Dictionary<string, object>();
+ 
+        public object this[string key]
         {
+            get
+            {
+                return data[key];
+            }
+
+            set
+            {
+                data[key] = value;
+            }
+        }
+
+        public NServiceBusBootstrapper()
+        {
+            data.Add("scan.directory", AppDomain.CurrentDomain.BaseDirectory);
+
+            if (HttpRuntime.AppDomainAppId != null)
+            {
+                data["scan.directory"] = HttpRuntime.BinDirectory;
+            }
         }
 
         public void With(string probeDirectory)
         {
+            data["scan.directory"] = probeDirectory;
+        }
+
+        public void With(IEnumerable<Assembly> assemblies)
+        {
+            data["scan.assemblies"] = assemblies.ToList();
+        }
+
+        /// <summary>
+        /// Configure to scan the given assemblies only.
+        /// </summary>
+        public void With(params Assembly[] assemblies)
+        {
+            data["scan.assemblies"] = assemblies.ToList();            
+        }
+
+        /// <summary>
+        /// Configure to scan the given types.
+        /// </summary>
+        public void With(IEnumerable<Type> typesToScan)
+        {
+            data["scan.types"] = typesToScan.ToArray();            
         }
 
         public void UseTransport<T>(string connectionStringName = null)

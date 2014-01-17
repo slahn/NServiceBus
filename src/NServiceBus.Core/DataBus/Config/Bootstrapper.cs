@@ -2,8 +2,9 @@ namespace NServiceBus.DataBus.Config
 {
     using System;
     using System.Linq;
+    using NServiceBus.Config;
 
-    public class Bootstrapper : Configurator
+    public class Bootstrapper : Configurator, IWantToRunWhenConfigurationIsComplete
 	{
         static bool dataBusPropertyFound;
 
@@ -57,7 +58,7 @@ To fix this, please mark the property type '{0}' as serializable, see http://msd
             }
 		}
 
-        public override void AfterConfigurationIsFinalized()
+        public void Run()
         {
             if (dataBusPropertyFound)
             {

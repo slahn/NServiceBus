@@ -171,7 +171,8 @@ namespace NServiceBus.Unicast.Tests.Contexts
             FuncBuilder.Register<UnicastBus>(() => unicastBus);
             new HeaderBootstrapper
             {
-                Builder = FuncBuilder
+                Bus = bus,
+                PipelineExecutor = pipelineFactory
             }.SetupHeaderActions();
         }
 
