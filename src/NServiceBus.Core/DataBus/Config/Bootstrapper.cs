@@ -2,17 +2,16 @@ namespace NServiceBus.DataBus.Config
 {
     using System;
     using System.Linq;
-    using NServiceBus.Config;
 
-    public class Bootstrapper : IWantToRunBeforeConfigurationIsFinalized, IWantToRunWhenConfigurationIsComplete
+    public class Bootstrapper : Configurator
 	{
         static bool dataBusPropertyFound;
 
-        void IWantToRunBeforeConfigurationIsFinalized.Run()
+        public override void BeforeFinalizingConfiguration()
 		{
-            if (!Configure.Instance.Configurer.HasComponent<IDataBusSerializer>() && System.Diagnostics.Debugger.IsAttached)
+            if (!IsRegistered<IDataBusSerializer>() && System.Diagnostics.Debugger.IsAttached)
             {
-                var properties = Configure.TypesToScan
+                var properties = TypesToScan
                     .Where(MessageConventionExtensions.IsMessageType)
                     .SelectMany(messageType => messageType.GetProperties())
                     .Where(MessageConventionExtensions.IsDataBusProperty);
@@ -34,7 +33,7 @@ To fix this, please mark the property type '{0}' as serializable, see http://msd
             }
             else
             {
-                dataBusPropertyFound = Configure.TypesToScan
+                dataBusPropertyFound = TypesToScan
                     .Where(MessageConventionExtensions.IsMessageType)
                     .SelectMany(messageType => messageType.GetProperties())
                     .Any(MessageConventionExtensions.IsDataBusProperty);
@@ -45,22 +44,20 @@ To fix this, please mark the property type '{0}' as serializable, see http://msd
 		        return;
 		    }
 
-			if (!Configure.Instance.Configurer.HasComponent<IDataBus>())
+			if (!IsRegistered<IDataBus>())
 			{
 			    throw new InvalidOperationException("Messages containing databus properties found, please configure a databus!");
 			}
 
-			Configure.Instance.Configurer.ConfigureComponent<DataBusMessageMutator>(
-                DependencyLifecycle.InstancePerCall);
+			Register<DataBusMessageMutator>(DependencyLifecycle.InstancePerCall);
 
-            if (!Configure.Instance.Configurer.HasComponent<IDataBusSerializer>())
+            if (!IsRegistered<IDataBusSerializer>())
             {
-                Configure.Instance.Configurer.ConfigureComponent<DefaultDataBusSerializer>(
-                    DependencyLifecycle.SingleInstance);
+                Register<DefaultDataBusSerializer>(DependencyLifecycle.SingleInstance);
             }
 		}
 
-        void IWantToRunWhenConfigurationIsComplete.Run()
+        public override void AfterConfigurationIsFinalized()
         {
             if (dataBusPropertyFound)
             {

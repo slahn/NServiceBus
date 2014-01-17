@@ -3,17 +3,13 @@
     using System;
     using System.Linq;
     using System.Text;
-    using Config;
     using Logging;
 
-    public class FeatureInitializer : IFinalizeConfiguration, IWantToRunBeforeConfigurationIsFinalized
+    public class FeatureInitializer : Configurator
     {
-        /// <summary>
-        /// Go trough all conditional features and figure out if the should be enabled or not
-        /// </summary>
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
-            Configure.Instance.ForAllTypes<Feature>(t =>
+            ForAllTypes<Feature>(t =>
                 {
                     var feature = (Feature)Activator.CreateInstance(t);
 
@@ -31,17 +27,17 @@
                 });
         }
 
-        public void FinalizeConfiguration()
+        public override void FinalizeConfiguration()
         {
             InitializeFeatures();
             InitializeCategories();
         }
 
-        static void InitializeFeatures()
+        void InitializeFeatures()
         {
             var statusText = new StringBuilder();
 
-            Configure.Instance.ForAllTypes<Feature>(t =>
+            ForAllTypes<Feature>(t =>
                 {
                     var feature = (Feature) Activator.CreateInstance(t);
 
@@ -66,11 +62,11 @@
             Logger.InfoFormat("Features: \n{0}", statusText);
         }
 
-        static void InitializeCategories()
+        void InitializeCategories()
         {
             var statusText = new StringBuilder();
 
-            Configure.Instance.ForAllTypes<FeatureCategory>(t =>
+            ForAllTypes<FeatureCategory>(t =>
             {
                 if(t == typeof(FeatureCategory.NoneFeatureCategory))
                     return;

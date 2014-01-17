@@ -2,9 +2,9 @@ namespace NServiceBus.Distributor.MSMQ.Config
 {
     using Settings;
 
-    class AdjustSettingsForNonMasterNodes : IWantToRunBeforeConfigurationIsFinalized
+    class AdjustSettingsForNonMasterNodes : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             if (!Configure.Instance.HasMasterNode())
             {

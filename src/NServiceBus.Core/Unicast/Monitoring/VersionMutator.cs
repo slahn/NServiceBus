@@ -2,7 +2,7 @@ namespace NServiceBus.Unicast.Monitoring
 {
     using MessageMutator;
 
-    public class VersionMutator : IMutateOutgoingTransportMessages, INeedInitialization
+    public class VersionMutator : Configurator, IMutateOutgoingTransportMessages 
     {
         /// <summary>
         /// Keeps track of related messages to make auditing possible
@@ -15,9 +15,9 @@ namespace NServiceBus.Unicast.Monitoring
         /// <summary>
         /// Initializer
         /// </summary>
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.Configurer.ConfigureComponent<VersionMutator>(DependencyLifecycle.SingleInstance);
+            Register<VersionMutator>(DependencyLifecycle.SingleInstance);
         }
     }
 }

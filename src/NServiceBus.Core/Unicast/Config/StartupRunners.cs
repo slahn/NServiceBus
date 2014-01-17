@@ -3,17 +3,17 @@ namespace NServiceBus.Unicast.Config
     using System.Linq;
     using NServiceBus.Config;
 
-    class StartupRunners : NServiceBus.INeedInitialization, IWantToRunWhenConfigurationIsComplete
+    class StartupRunners : Configurator, IWantToRunWhenConfigurationIsComplete
     {
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.TypesToScan
+            TypesToScan
                 .Where(
                     t =>
                     typeof(IWantToRunWhenTheBusStarts).IsAssignableFrom(t) && !t.IsInterface)
                 .ToList()
                 .ForEach(
-                    type => Configure.Instance.Configurer.ConfigureComponent(type, DependencyLifecycle.InstancePerCall));
+                    type => Register(type, DependencyLifecycle.InstancePerCall));
         }
 
         public void Run()

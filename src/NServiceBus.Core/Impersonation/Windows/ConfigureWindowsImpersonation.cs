@@ -9,17 +9,17 @@ namespace NServiceBus.Impersonation.Windows
         Replacement = "message.GetHeader(Headers.WindowsIdentityName)",
         RemoveInVersion = "5.0",
         TreatAsErrorFromVersion = "4.3")]
-    public class ConfigureWindowsImpersonation : IWantToRunBeforeConfigurationIsFinalized
+    public class ConfigureWindowsImpersonation : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             //default to Windows impersonation if no other impersonation is configured
-            if (Configure.Instance.Configurer.HasComponent<ExtractIncomingPrincipal>())
+            if (IsRegistered<ExtractIncomingPrincipal>())
             {
                 return;
             }
 
-            Configure.Instance.Configurer.ConfigureComponent<WindowsImpersonator>(DependencyLifecycle.SingleInstance);
+            Register<WindowsImpersonator>(DependencyLifecycle.SingleInstance);
         }
 
     }

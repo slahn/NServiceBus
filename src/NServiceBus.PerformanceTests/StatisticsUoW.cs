@@ -6,7 +6,7 @@
     using NServiceBus;
     using NServiceBus.UnitOfWork;
 
-    class StatisticsUoW : IManageUnitsOfWork, INeedInitialization
+    class StatisticsUoW : Configurator, IManageUnitsOfWork
     {
         public void Begin()
         {
@@ -52,9 +52,9 @@
                 RecordSuccess();
         }
 
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Component<StatisticsUoW>(DependencyLifecycle.InstancePerUnitOfWork);
+            Register<StatisticsUoW>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

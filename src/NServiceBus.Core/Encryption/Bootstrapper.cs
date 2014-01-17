@@ -1,10 +1,10 @@
 namespace NServiceBus.Encryption
 {
-    class Bootstrapper : INeedInitialization
+    class Bootstrapper : Configurator
     {
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.Configurer.ConfigureComponent<EncryptionMessageMutator>(DependencyLifecycle.InstancePerCall);
+            Register<EncryptionMessageMutator>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

@@ -3,7 +3,6 @@
     using System.Reflection;
     using Fakes;
     using Faults;
-    using NServiceBus.Config;
     using NUnit.Framework;
     using Satellites;
     using Unicast.Transport;
@@ -37,8 +36,8 @@
             Builder.Register<IManageMessageFailures>(() => InMemoryFaultManager);
             Builder.Register<TransportReceiver>(() => Transport);
 
-            var configurer = new SatelliteConfigurer();
-            configurer.Init();
+            //var configurer = new SatelliteConfigurer();
+            //configurer.As(null);
 
             var launcher = new SatelliteLauncher();
 

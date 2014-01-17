@@ -5,7 +5,7 @@
     using Timeout;
 
     [ObsoleteEx(RemoveInVersion = "5.0", TreatAsErrorFromVersion = "5.0", Message = "Exist only for compatibility between V4 and V3. No longer needed in V5")]
-    public class SetIsSagaMessageHeaderForV3XMessages : IMutateIncomingMessages, INeedInitialization
+    public class SetIsSagaMessageHeaderForV3XMessages : Configurator, IMutateIncomingMessages
     {
         public IBus Bus { get; set; }
 
@@ -37,9 +37,9 @@
             return message;
         }
 
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.Configurer.ConfigureComponent<SetIsSagaMessageHeaderForV3XMessages>(DependencyLifecycle.InstancePerCall);
+            Register<SetIsSagaMessageHeaderForV3XMessages>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Activates the profiles to be used
     /// </summary>
-    public class ProfileActivator : IWantToRunBeforeConfigurationIsFinalized
+    public class ProfileActivator : Configurator
     {
         /// <summary>
         /// The profile manager
@@ -13,10 +13,12 @@
         /// <summary>
         /// Activate profile handlers
         /// </summary>
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             if (ProfileManager != null)
+            {
                 ProfileManager.ActivateProfileHandlers();
+            }
         }
     }
 }

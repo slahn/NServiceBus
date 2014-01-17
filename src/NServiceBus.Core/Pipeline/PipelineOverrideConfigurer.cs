@@ -1,10 +1,10 @@
 ﻿namespace NServiceBus.Pipeline
 {
-    class PipelineOverrideConfigurer : INeedInitialization
+    class PipelineOverrideConfigurer : Configurator
     {
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.ForAllTypes<IPipelineOverride>(s => Configure.Instance.Configurer.ConfigureComponent(s, DependencyLifecycle.InstancePerCall));
+            RegisterAllTypes<IPipelineOverride>(DependencyLifecycle.InstancePerCall);
         }
     }
 }

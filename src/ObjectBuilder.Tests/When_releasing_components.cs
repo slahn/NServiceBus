@@ -22,8 +22,6 @@ namespace ObjectBuilder.Tests
 
                     builder.Release(comp);
 
-                    comp = null;
-
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
 

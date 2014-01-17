@@ -3,7 +3,7 @@ namespace NServiceBus.Gateway.HeaderManagement
     using System;
     using MessageMutator;
 
-    public class GatewayHeaderManager : IMutateTransportMessages, INeedInitialization
+    public class GatewayHeaderManager : Configurator, IMutateTransportMessages
     {
         public void MutateIncoming(TransportMessage transportMessage)
         {
@@ -61,10 +61,9 @@ namespace NServiceBus.Gateway.HeaderManagement
             transportMessage.Headers[GatewayHeaders.LegacyMode] = returnInfo.LegacyMode.ToString();
         }
 
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.Configurer.ConfigureComponent<GatewayHeaderManager>(
-                DependencyLifecycle.InstancePerCall);
+            Register<GatewayHeaderManager>(DependencyLifecycle.InstancePerCall);
         }
 
         [ThreadStatic] static HttpReturnInfo returnInfo;

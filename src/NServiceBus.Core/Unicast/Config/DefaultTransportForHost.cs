@@ -6,11 +6,11 @@ namespace NServiceBus.Unicast.Config
     /// <summary>
     /// Default to MSMQ transport if no other transport has been configured. This can be removed when we introduce the modules concept
     /// </summary>
-    public class DefaultTransportForHost : IWantToRunBeforeConfigurationIsFinalized
+    public class DefaultTransportForHost : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
-            if (Configure.Instance.Configurer.HasComponent<ISendMessages>())
+            if (IsRegistered<ISendMessages>())
             {
                 return;
             }

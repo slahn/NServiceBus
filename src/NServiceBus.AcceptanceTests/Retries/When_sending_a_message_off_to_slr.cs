@@ -64,7 +64,7 @@
                         .AllowExceptions();
             }
 
-            class BodyMutator : IMutateTransportMessages, NServiceBus.INeedInitialization
+            class BodyMutator : Configurator, IMutateTransportMessages
             {
                 public Context Context { get; set; }
 
@@ -94,9 +94,9 @@
                     transportMessage.Body[0]--;
                 }
 
-                public void Init()
+                public override void RegisterTypes()
                 {
-                    Configure.Component<BodyMutator>(DependencyLifecycle.InstancePerCall);
+                    Register<BodyMutator>(DependencyLifecycle.InstancePerCall);
                 }
             }
 

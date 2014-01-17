@@ -2,9 +2,9 @@
 {
     using Config;
 
-    public class TimeoutManagerDefaults : IWantToRunBeforeConfiguration
+    public class TimeoutManagerDefaults : Configurator
     {
-        public void Init()
+        public override void InitializeDefaults()
         {
             InfrastructureServices.SetDefaultFor<IManageTimeouts>(typeof(DefaultTimeoutManager), DependencyLifecycle.SingleInstance);
         }

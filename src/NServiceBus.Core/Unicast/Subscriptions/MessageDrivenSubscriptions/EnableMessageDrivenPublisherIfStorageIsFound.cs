@@ -7,11 +7,11 @@
     /// This class handles backwards compatibility. If there is a ISubscription storage registered by the user we should use
     /// the message drive´n subscription manager
     /// </summary>
-    public class EnableMessageDrivenPublisherIfStorageIsFound:IWantToRunBeforeConfigurationIsFinalized
+    public class EnableMessageDrivenPublisherIfStorageIsFound : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
-            if (Configure.Instance.Configurer.HasComponent<ISubscriptionStorage>())
+            if (IsRegistered<ISubscriptionStorage>())
             {
                 Feature.Enable<StorageDrivenPublisher>();
                 Logger.InfoFormat("ISubscriptionStorage found in the container. The message driven publisher feature will be activeated");

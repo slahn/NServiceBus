@@ -7,7 +7,6 @@ namespace NServiceBus.Unicast
     using System.Security.Principal;
     using System.Threading.Tasks;
     using Audit;
-    using Licensing;
     using Logging;
     using MessageInterfaces;
     using Messages;
@@ -28,8 +27,6 @@ namespace NServiceBus.Unicast
     /// </summary>
     public class UnicastBus : IUnicastBus, IInMemoryOperations
     {
-
-
         bool messageHandlingDisabled;
 
         /// <summary>
@@ -747,7 +744,6 @@ namespace NServiceBus.Unicast
 
         public IBus Start(Action startupAction)
         {
-            LicenseManager.PromptUserForLicenseIfTrialHasExpired();
 
             if (started)
             {

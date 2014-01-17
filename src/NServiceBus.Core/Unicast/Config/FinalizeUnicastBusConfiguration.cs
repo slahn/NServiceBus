@@ -11,11 +11,11 @@ namespace NServiceBus.Unicast.Config
     using Routing;
     using Settings;
 
-    internal class FinalizeUnicastBusConfiguration : IFinalizeConfiguration
+    internal class FinalizeUnicastBusConfiguration : Configurator
     {
-        public void FinalizeConfiguration()
+        public override void FinalizeConfiguration()
         {
-            var knownMessages = Configure.TypesToScan
+            var knownMessages = TypesToScan
                 .Where(MessageConventionExtensions.IsMessageType)
                 .ToList();
 
@@ -31,7 +31,7 @@ namespace NServiceBus.Unicast.Config
 
         void RegisterMessageOwnersAndBusAddress(IEnumerable<Type> knownMessages)
         {
-            var unicastConfig = Configure.GetConfigSection<UnicastBusConfig>();
+            var unicastConfig = GetConfigSection<UnicastBusConfig>();
             var router = new StaticMessageRouter(knownMessages);
             var key = typeof(DefaultAutoSubscriptionStrategy).FullName + ".SubscribePlainMessages";
 
@@ -40,7 +40,7 @@ namespace NServiceBus.Unicast.Config
                 router.SubscribeToPlainMessages = SettingsHolder.Get<bool>(key);
             }
 
-            Configure.Instance.Configurer.RegisterSingleton<StaticMessageRouter>(router);
+            RegisterInstance(router, DependencyLifecycle.SingleInstance);
 
             if (unicastConfig == null)
             {
@@ -91,8 +91,8 @@ namespace NServiceBus.Unicast.Config
 
             knownMessages.ForEach(messageRegistry.RegisterMessageType);
 
-            Configure.Instance.Configurer.RegisterSingleton<MessageMetadataRegistry>(messageRegistry);
-            Configure.Instance.Configurer.ConfigureComponent<LogicalMessageFactory>(DependencyLifecycle.SingleInstance);
+            RegisterInstance<MessageMetadataRegistry>(messageRegistry, DependencyLifecycle.SingleInstance);
+            Register<LogicalMessageFactory>(DependencyLifecycle.SingleInstance);
 
             if (!Logger.IsInfoEnabled)
             {

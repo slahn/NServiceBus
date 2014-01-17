@@ -13,7 +13,7 @@
 
             LogManager.GetLogger("Testing").Debug("Hello");
 
-            new ConfigureInternalLog4NetBridge().Init();
+            new ConfigureInternalLog4NetBridge().InitializeDefaults();
 
             log4net.LogManager.GetLogger("BridgedLogger").Debug("Hello from log4net");
         }

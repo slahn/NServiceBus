@@ -5,9 +5,9 @@
     /// <summary>
     ///     Sets the default input address for the gateway
     /// </summary>
-    public class DefaultInputAddress : IWantToRunBeforeConfigurationIsFinalized
+    public class DefaultInputAddress : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             var gatewayInputAddress = Address.Parse(Configure.EndpointName).SubScope("gateway");
 

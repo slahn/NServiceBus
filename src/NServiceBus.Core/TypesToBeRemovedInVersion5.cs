@@ -5,17 +5,13 @@
     using Saga;
 
     [ObsoleteEx(TreatAsErrorFromVersion = "4.3", RemoveInVersion = "5.0")]
-    public class AutoCorrelateSagaOnReplyMutator : IMutateTransportMessages, INeedInitialization
+    public class AutoCorrelateSagaOnReplyMutator : IMutateTransportMessages
     {
         public void MutateIncoming(TransportMessage transportMessage)
         {
         }
 
         public void MutateOutgoing(object[] messages, TransportMessage transportMessage)
-        {
-        }
-
-        public void Init()
         {
         }
     }
@@ -37,16 +33,12 @@
     }
 
     [ObsoleteEx(TreatAsErrorFromVersion = "4.3", RemoveInVersion = "5.0")]
-    public class OriginatingSagaHeaderMutator : IMutateOutgoingTransportMessages, INeedInitialization
+    public class OriginatingSagaHeaderMutator : IMutateOutgoingTransportMessages
     {
         /// <summary>
         /// Set the header if we run in the context of a saga
         /// </summary>
         public void MutateOutgoing(object[] messages, TransportMessage transportMessage)
-        {
-        }
-
-        public void Init()
         {
         }
     }

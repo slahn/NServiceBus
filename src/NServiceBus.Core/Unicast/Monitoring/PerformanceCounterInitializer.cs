@@ -6,9 +6,9 @@ namespace NServiceBus.Unicast.Monitoring
     /// <summary>
     /// Initializes the performance counters if they are enabled
     /// </summary>
-    public class PerformanceCounterInitializer : IWantToRunBeforeConfigurationIsFinalized
+    public class PerformanceCounterInitializer : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             if (!Configure.Instance.PerformanceCountersEnabled())
                 return;

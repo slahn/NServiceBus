@@ -3,11 +3,11 @@
     using System;
     using Logging;
 
-    public class EnableDefaultFeatures : IWantToRunBeforeConfiguration
+    public class EnableDefaultFeatures : Configurator
     {
-        public void Init()
+        public override void InitializeDefaults()
         {
-            Configure.Instance.ForAllTypes<Feature>(t =>
+            ForAllTypes<Feature>(t =>
             {
                 var feature = (Feature)Activator.CreateInstance(t);
 

@@ -41,7 +41,7 @@
                     .AuditTo<AuditSpyEndpoint>();
             }
 
-            class BodyMutator : IMutateTransportMessages, INeedInitialization
+            class BodyMutator : Configurator, IMutateTransportMessages 
             {
                 public Context Context { get; set; }
 
@@ -69,9 +69,9 @@
                     transportMessage.Body[0]--;
                 }
 
-                public void Init()
+                public override void RegisterTypes()
                 {
-                    Configure.Component<BodyMutator>(DependencyLifecycle.InstancePerCall);
+                    Register<BodyMutator>(DependencyLifecycle.InstancePerCall);
                 }
             }
 
@@ -86,7 +86,7 @@
                 EndpointSetup<DefaultServer>();
             }
 
-            class BodySpy : IMutateIncomingTransportMessages, INeedInitialization
+            class BodySpy : Configurator, IMutateIncomingTransportMessages 
             {
                 public Context Context { get; set; }
 
@@ -95,9 +95,9 @@
                     Context.AuditChecksum = Checksum(transportMessage.Body);
                 }
 
-                public void Init()
+                public override void RegisterTypes()
                 {
-                    Configure.Component<BodySpy>(DependencyLifecycle.InstancePerCall);
+                    Register<BodySpy>(DependencyLifecycle.InstancePerCall);
                 }
             }
         }

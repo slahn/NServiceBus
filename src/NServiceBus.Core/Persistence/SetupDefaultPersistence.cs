@@ -1,8 +1,8 @@
 ﻿namespace NServiceBus.Persistence
 {
-    public class SetupDefaultPersistence : IWantToRunBeforeConfiguration
+    public class SetupDefaultPersistence : Configurator
     {
-        public void Init()
+        public override void InitializeDefaults()
         {
             ConfigureRavenPersistence.RegisterDefaults();
         }

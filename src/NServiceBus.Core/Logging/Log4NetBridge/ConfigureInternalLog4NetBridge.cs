@@ -1,20 +1,15 @@
 namespace NServiceBus.Logging.Log4NetBridge
 {
-    public class ConfigureInternalLog4NetBridge : IWantToRunBeforeConfiguration
+    public class ConfigureInternalLog4NetBridge : Configurator
     {
-        private static bool isConfigured;
-
-        public void Init()
+        public override void InitializeDefaults()
         {
-            if (isConfigured)
-                return;
-
             var isLog4NetMerged = typeof(log4net.ILog).Assembly == System.Reflection.Assembly.GetExecutingAssembly();
 
             if (isLog4NetMerged)
+            {
                 log4net.Config.BasicConfigurator.Configure(new Log4NetBridgeAppender());
-
-            isConfigured = true;
+            }
         }
     }
 }

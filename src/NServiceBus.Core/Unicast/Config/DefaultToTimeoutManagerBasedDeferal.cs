@@ -1,18 +1,22 @@
 ﻿namespace NServiceBus.Unicast.Config
 {
-    using NServiceBus.Config;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
     using Timeout;
     using Transports;
 
-    public class DefaultToTimeoutManagerBasedDeferal:IFinalizeConfiguration
+    public class DefaultToTimeoutManagerBasedDeferal : Configurator
     {
-        public void FinalizeConfiguration()
+        public override void FinalizeConfiguration()
         {
-            if (Configure.HasComponent<IDeferMessages>())
+            if (IsRegistered<IDeferMessages>())
                 return;
 
-            Configure.Component<TimeoutManagerDeferrer>(DependencyLifecycle.InstancePerCall)
-              .ConfigureProperty(p => p.TimeoutManagerAddress, Configure.Instance.GetTimeoutManagerAddress());
+            Register(DependencyLifecycle.InstancePerCall, new Dictionary<Expression<Func<TimeoutManagerDeferrer, object>>, object>
+            {
+                {p => p.TimeoutManagerAddress, Configure.Instance.GetTimeoutManagerAddress()}
+            });
         }
     }
 }

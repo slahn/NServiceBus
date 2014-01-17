@@ -2,11 +2,11 @@ namespace NServiceBus.Config
 {
     using Satellites;
 
-    public class SatelliteConfigurer : NServiceBus.INeedInitialization
+    public class SatelliteConfigurer : Configurator
     {
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.ForAllTypes<ISatellite>(s => Configure.Instance.Configurer.ConfigureComponent(s, DependencyLifecycle.SingleInstance));
+            RegisterAllTypes<ISatellite>(DependencyLifecycle.SingleInstance);
         }
     }
 }

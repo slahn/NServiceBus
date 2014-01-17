@@ -3,15 +3,14 @@ namespace NServiceBus.Config
     /// <summary>
     /// Initializes the local address
     /// </summary>
-    public class AddressInitializer : IWantToRunBeforeConfiguration
+    public class AddressInitializer : Configurator
     {
-        /// <summary>
-        /// Initialize the local address
-        /// </summary>
-        public void Init()
+        public override void InitializeDefaults()
         {
             if (Address.Local == null)
+            {
                 Address.InitializeLocalAddress(ConfigureSettingLocalAddressNameAction.GetLocalAddressName());
+            }
         }
     }
 }

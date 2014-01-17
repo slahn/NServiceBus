@@ -78,13 +78,13 @@ namespace NServiceBus
 		static readonly ILog Logger = LogManager.GetLogger(typeof(ConfigureFaultsForwarder));
 	}
 
-	class Bootstrapper : INeedInitialization
+	class Bootstrapper : Configurator
 	{
-		public void Init()
+        public override void RegisterTypes()
 		{
-			if (!Configure.Instance.Configurer.HasComponent<IManageMessageFailures>())
+			if (!IsRegistered<IManageMessageFailures>())
 			{
-				Configure.Instance.MessageForwardingInCaseOfFault();
+                MessageForwardingInCaseOfFault();
 			}
 		}
 	}

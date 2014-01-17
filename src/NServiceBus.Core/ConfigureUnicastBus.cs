@@ -40,9 +40,9 @@ namespace NServiceBus
         internal static ConfigUnicastBus Instance { get; private set; }
     }
 
-    class EnsureLoadMessageHandlersWasCalled : INeedInitialization
+    class EnsureLoadMessageHandlersWasCalled : Configurator
     {
-        public void Init()
+        public override void RegisterTypes()
         {
             if (ConfigureUnicastBus.Instance != null)
                 if (!ConfigureUnicastBus.Instance.LoadMessageHandlersCalled)

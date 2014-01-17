@@ -6,7 +6,7 @@ namespace NServiceBus.Unicast.Monitoring
     /// <summary>
     /// Stores the start and end times for statistic purposes
     /// </summary>
-    public class ProcessingStatistics : IManageUnitsOfWork, INeedInitialization
+    public class ProcessingStatistics : Configurator, IManageUnitsOfWork 
     {
         /// <summary>
         /// Needs the bus to set the headers
@@ -51,9 +51,9 @@ namespace NServiceBus.Unicast.Monitoring
                 EstimatedTimeToSLABreachCalculator.Update(timeSent, processingStarted, processingEnded);
         }
 
-        public void Init()
+        public override void RegisterTypes()
         {
-            Configure.Instance.Configurer.ConfigureComponent<ProcessingStatistics>(DependencyLifecycle.InstancePerUnitOfWork);
+            Register<ProcessingStatistics>(DependencyLifecycle.InstancePerUnitOfWork);
         }
     }
 }

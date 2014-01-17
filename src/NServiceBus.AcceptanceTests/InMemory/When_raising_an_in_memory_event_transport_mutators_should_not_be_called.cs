@@ -22,7 +22,7 @@
             Assert.False(context.MutateOutGoingCalled);
         }
 
-        class Mutator : IMutateTransportMessages, INeedInitialization
+        class Mutator : Configurator, IMutateTransportMessages
         {
             public Context Context { get; set; }
 
@@ -36,9 +36,9 @@
                 Context.MutateOutGoingCalled = true;
             }
 
-            public void Init()
+            public override void RegisterTypes()
             {
-                Configure.Component<Mutator>(DependencyLifecycle.InstancePerCall);
+                Register<Mutator>(DependencyLifecycle.InstancePerCall);
             }
         }
 

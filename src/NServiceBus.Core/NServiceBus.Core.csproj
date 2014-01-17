@@ -97,6 +97,8 @@
     <Compile Include="AutomaticSubscriptions\Config\AutoSubscribeSettingsExtensions.cs" />
     <Compile Include="AutomaticSubscriptions\Config\AutoSubscribeSettings.cs" />
     <Compile Include="CircuitBreakers\ICircuitBreaker.cs" />
+    <Compile Include="Config\INeedInitialization.cs" />
+    <Compile Include="NServiceBusBootstrapper.cs" />
     <Compile Include="Configure.cs" />
     <Compile Include="Config\AuditConfig.cs" />
     <Compile Include="Config\WindowsInstallerRunner.cs" />
@@ -269,7 +271,6 @@
     <Compile Include="Config\Conventions\SystemMessageConventions.cs" />
     <Compile Include="Config\ConfigureExtensions.cs" />
     <Compile Include="Config\GatewayConfig.cs" />
-    <Compile Include="Config\INeedInitialization.cs" />
     <Compile Include="Config\IWantToRunWhenConfigurationIsComplete.cs" />
     <Compile Include="Config\Logging.cs" />
     <Compile Include="Distributor\MasterNode\MasterNodeConfig.cs" />

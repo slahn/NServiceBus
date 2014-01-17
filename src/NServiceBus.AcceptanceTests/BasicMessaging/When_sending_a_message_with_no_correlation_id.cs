@@ -35,7 +35,7 @@
                 EndpointSetup<DefaultServer>();
             }
 
-            class GetValueOfIncomingCorrelationId:IMutateIncomingTransportMessages,INeedInitialization
+            class GetValueOfIncomingCorrelationId:Configurator,IMutateIncomingTransportMessages
             {
                 public Context Context { get; set; }
 
@@ -45,9 +45,9 @@
                     Context.MessageIdReceived = transportMessage.Id;
                 }
 
-                public void Init()
+                public override void RegisterTypes()
                 {
-                    Configure.Component<GetValueOfIncomingCorrelationId>(DependencyLifecycle.InstancePerCall);
+                    Register<GetValueOfIncomingCorrelationId>(DependencyLifecycle.InstancePerCall);
                 }
             }
 

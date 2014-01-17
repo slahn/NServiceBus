@@ -17,11 +17,11 @@ namespace NServiceBus.Core.Tests.DataBus
                 .DefineEndpointName("xyz") 
                 .DefaultBuilder();
 
-            IWantToRunBeforeConfigurationIsFinalized bootstrapper = new Bootstrapper();
+            var bootstrapper = new Bootstrapper();
 
         	Configure.Instance.Configurer.ConfigureComponent<InMemoryDataBus>(DependencyLifecycle.SingleInstance);
 
-            bootstrapper.Run();
+            bootstrapper.BeforeFinalizingConfiguration();
 
             Assert.True(Configure.Instance.Configurer.HasComponent<IDataBus>());
         }
@@ -33,9 +33,9 @@ namespace NServiceBus.Core.Tests.DataBus
                 .DefineEndpointName("xyz") 
                 .DefaultBuilder();
 
-            IWantToRunBeforeConfigurationIsFinalized bootstrapper = new Bootstrapper();
+            var bootstrapper = new Bootstrapper();
 
-            bootstrapper.Run();
+            bootstrapper.BeforeFinalizingConfiguration();
 
             Assert.False(Configure.Instance.Configurer.HasComponent<IDataBus>());
         }
@@ -54,9 +54,9 @@ namespace NServiceBus.Core.Tests.DataBus
                 .DefaultBuilder()
                 .Configurer.RegisterSingleton<IDataBus>(new InMemoryDataBus());
 
-            IWantToRunBeforeConfigurationIsFinalized bootstrapper = new Bootstrapper();
+            var bootstrapper = new Bootstrapper();
 
-            Assert.Throws<InvalidOperationException>(bootstrapper.Run);
+            Assert.Throws<InvalidOperationException>(bootstrapper.BeforeFinalizingConfiguration);
         }
 
         [Test]
@@ -73,11 +73,11 @@ namespace NServiceBus.Core.Tests.DataBus
                 .DefaultBuilder()
                 .Configurer.RegisterSingleton<IDataBus>(new InMemoryDataBus());
 
-            IWantToRunBeforeConfigurationIsFinalized bootstrapper = new Bootstrapper();
+            var bootstrapper = new Bootstrapper();
 
             Configure.Instance.Configurer.ConfigureComponent<IDataBusSerializer>(() => new MyDataBusSerializer(),DependencyLifecycle.SingleInstance);
 
-            Assert.DoesNotThrow(bootstrapper.Run);
+            Assert.DoesNotThrow(bootstrapper.BeforeFinalizingConfiguration);
         }
 
         class MyDataBusSerializer : IDataBusSerializer

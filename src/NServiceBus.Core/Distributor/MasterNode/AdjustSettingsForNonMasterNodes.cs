@@ -3,9 +3,9 @@ namespace NServiceBus.MasterNode
     using Settings;
 
     [ObsoleteEx(Message = "Not a public API.", TreatAsErrorFromVersion = "4.3", RemoveInVersion = "5.0")]
-    class AdjustSettingsForNonMasterNodes : IWantToRunBeforeConfigurationIsFinalized
+    class AdjustSettingsForNonMasterNodes : Configurator
     {
-        public void Run()
+        public override void BeforeFinalizingConfiguration()
         {
             if (!Configure.Instance.HasMasterNode())
                 return;

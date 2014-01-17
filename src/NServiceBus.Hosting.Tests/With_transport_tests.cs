@@ -34,7 +34,7 @@ namespace NServiceBus.Hosting.Tests
         public void Should_default_to_msmq_if_no_other_transport_is_configured()
         {
             var handler = new DefaultTransportForHost();
-            handler.Run();
+            handler.BeforeFinalizingConfiguration();
 
             Assert.True(SettingsHolder.Get<TransportDefinition>("NServiceBus.Transport.SelectedTransport") is Msmq);
         }
@@ -45,7 +45,7 @@ namespace NServiceBus.Hosting.Tests
             var handler = new DefaultTransportForHost();
             Configure.Instance.Configurer.ConfigureComponent<MyTestTransportSender>(DependencyLifecycle.SingleInstance);
 
-            handler.Run();
+            handler.BeforeFinalizingConfiguration();
 
             Assert.IsInstanceOf<MyTestTransportSender>(Configure.Instance.Builder.Build<ISendMessages>());
         }
