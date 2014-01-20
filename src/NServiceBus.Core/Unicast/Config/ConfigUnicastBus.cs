@@ -258,7 +258,7 @@ namespace NServiceBus.Unicast.Config
         [ObsoleteEx(RemoveInVersion = "5.0", TreatAsErrorFromVersion = "4.0", Replacement = "Configure.Features.Disable<AutoSubscribe>()")]
         public ConfigUnicastBus DoNotAutoSubscribe()
         {
-            Features.Disable<AutoSubscribe>();
+            Feature.Disable<AutoSubscribe>();
 
             return this;
         }

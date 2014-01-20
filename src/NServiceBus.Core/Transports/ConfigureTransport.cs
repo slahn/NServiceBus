@@ -2,29 +2,32 @@ namespace NServiceBus.Transports
 {
     using System;
     using Features;
-    using Settings;
     using Unicast.Transport;
 
     public abstract class ConfigureTransport<T> : Feature, IConfigureTransport<T> where T : TransportDefinition
     {
-        public void Configure(Configure config)
+
+        public void Configure(Configurator config)
         {
-            var connectionString = TransportConnectionString.GetConnectionStringOrNull();
+            var connectionStringRetriever = new TransportConnectionStringRetriever();
+            connectionStringRetriever.Override(config.Bootstrapper["transport.definesConnectionString"] as Func<string>);
+
+            var connectionString = connectionStringRetriever.GetConnectionStringOrNull(config.Bootstrapper["transport.connectionStringName"] as string);
 
             if (connectionString == null && RequiresConnectionString)
             {
                 throw new InvalidOperationException(String.Format(Message, GetConfigFileIfExists(), typeof(T).Name, ExampleConnectionStringForErrorMessage));
             }
 
-            SettingsHolder.Set("NServiceBus.Transport.ConnectionString", connectionString);
+            config.SettingsHolder.Set("NServiceBus.Transport.ConnectionString", connectionString);
 
             var selectedTransportDefinition = Activator.CreateInstance<T>();
-            SettingsHolder.Set("NServiceBus.Transport.SelectedTransport", selectedTransportDefinition);
-            config.Configurer.RegisterSingleton<TransportDefinition>(selectedTransportDefinition);
+            config.SettingsHolder.Set("NServiceBus.Transport.SelectedTransport", selectedTransportDefinition);
+            config.RegisterInstance<TransportDefinition>(selectedTransportDefinition, DependencyLifecycle.SingleInstance);
             InternalConfigure(config);
         }
 
-        protected abstract void InternalConfigure(Configure config);
+        protected abstract void InternalConfigure(Configurator config);
 
         protected abstract string ExampleConnectionStringForErrorMessage { get; }
 

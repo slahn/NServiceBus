@@ -20,7 +20,7 @@ namespace NServiceBus.Unicast.Transport.Config
                     maximumThroughput = LicenseManager.License.MaxThroughputPerSecond;
                 }
             }
-
+            
             var transactionSettings = new TransactionSettings
                 {
                     MaxRetries = maximumNumberOfRetries

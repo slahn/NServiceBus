@@ -11,7 +11,7 @@
         {
             var gatewayInputAddress = Address.Parse(Configure.EndpointName).SubScope("gateway");
 
-            SettingsHolder.SetDefault("Gateway.InputAddress", gatewayInputAddress);
+            Settings.SettingsHolder.SetDefault("Gateway.InputAddress", gatewayInputAddress);
         }
     }
 }

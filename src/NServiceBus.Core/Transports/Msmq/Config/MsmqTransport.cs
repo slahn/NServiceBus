@@ -1,22 +1,28 @@
 ﻿namespace NServiceBus.Features
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
     using Config;
     using Logging;
-    using Settings;
     using Transports;
     using Transports.Msmq;
     using Transports.Msmq.Config;
 
-    public class MsmqTransport:ConfigureTransport<Msmq>
+    public class MsmqTransport : ConfigureTransport<Msmq>
     {
         public override void Initialize()
         {
-            NServiceBus.Configure.Component<CorrelationIdMutatorForBackwardsCompatibilityWithV3>(DependencyLifecycle.InstancePerCall);
-            NServiceBus.Configure.Component<MsmqUnitOfWork>(DependencyLifecycle.SingleInstance);
-            NServiceBus.Configure.Component<MsmqDequeueStrategy>(DependencyLifecycle.InstancePerCall)
-                .ConfigureProperty(p => p.PurgeOnStartup, ConfigurePurging.PurgeRequested);
-          
-            var cfg = NServiceBus.Configure.GetConfigSection<MsmqMessageQueueConfig>();
+            Configurator.Register<CorrelationIdMutatorForBackwardsCompatibilityWithV3>(DependencyLifecycle.InstancePerCall);
+            Configurator.Register<MsmqUnitOfWork>(DependencyLifecycle.SingleInstance);
+            Configurator.Register(DependencyLifecycle.InstancePerCall, new Dictionary<Expression<Func<MsmqDequeueStrategy, object>>, object>
+            {
+                {
+                    p => p.PurgeOnStartup, Configurator.Bootstrapper["PurgeOnStartup"]
+                }
+            });
+
+            var cfg = Configurator.GetConfigSection<MsmqMessageQueueConfig>();
 
             var settings = new MsmqSettings();
             if (cfg != null)
@@ -28,28 +34,37 @@
             }
             else
             {
-                var connectionString = SettingsHolder.Get<string>("NServiceBus.Transport.ConnectionString");
-         
+                var connectionString = Configurator.SettingsHolder.Get<string>("NServiceBus.Transport.ConnectionString");
+
                 if (connectionString != null)
                 {
                     settings = new MsmqConnectionStringBuilder(connectionString).RetrieveSettings();
                 }
             }
 
-            NServiceBus.Configure.Component<MsmqMessageSender>(DependencyLifecycle.InstancePerCall)
-                .ConfigureProperty(t => t.Settings, settings);
+            Configurator.Register(DependencyLifecycle.InstancePerCall, new Dictionary<Expression<Func<MsmqMessageSender, object>>, object>
+            {
+                {
+                    t => t.Settings, settings
+                }
+            });
+                
 
-            NServiceBus.Configure.Component<MsmqQueueCreator>(DependencyLifecycle.InstancePerCall)
-                .ConfigureProperty(t => t.Settings, settings);
+            Configurator.Register(DependencyLifecycle.InstancePerCall, new Dictionary<Expression<Func<MsmqQueueCreator, object>>, object>
+            {
+                {
+                    t => t.Settings, settings
+                }
+            });
         }
 
-        protected override void InternalConfigure(Configure config)
+        protected override void InternalConfigure(Configurator config)
         {
             Enable<MsmqTransport>();
             Enable<MessageDrivenSubscriptions>();
 
             //for backwards compatibility
-            SettingsHolder.SetDefault("SerializationSettings.WrapSingleMessages", true);
+            config.SettingsHolder.SetDefault("SerializationSettings.WrapSingleMessages", true);
         }
 
         protected override string ExampleConnectionStringForErrorMessage
@@ -62,9 +77,9 @@
             get { return false; }
         }
 
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ConfigureMsmqMessageQueue));
+        static readonly ILog Logger = LogManager.GetLogger(typeof(ConfigureMsmqMessageQueue));
 
-        private const string Message =
+        const string Message =
             @"
 MsmqMessageQueueConfig section has been deprecated in favor of using a connectionString instead.
 Here is an example of what is required:

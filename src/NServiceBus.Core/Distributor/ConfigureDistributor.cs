@@ -4,9 +4,12 @@ namespace NServiceBus
     using System.Configuration;
     using System.Linq;
     using System.Net;
+    using Distributor;
     using Distributor.Config;
     using Logging;
     using Settings;
+    using Transports.Msmq.WorkerAvailabilityManager;
+    using Unicast;
 
     [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "6.0", Message = "The NServiceBus Distributor was moved into its own assembly (NServiceBus.Distributor.MSMQ.dll), please make sure you reference the new assembly.")]
     public static class ConfigureDistributor
@@ -36,7 +39,7 @@ namespace NServiceBus
         [ObsoleteEx(TreatAsErrorFromVersion = "5.0", RemoveInVersion = "6.0", Message = "The NServiceBus Distributor was moved into its own assembly (NServiceBus.Distributor.MSMQ.dll), please make sure you reference the new assembly.")]
         public static Configure RunDistributor(this Configure config, bool withWorker = true)
         {
-            DistributorInitializer.Init(withWorker);
+            DistributorInitialize(withWorker);
 
             if (withWorker)
             {
@@ -44,6 +47,32 @@ namespace NServiceBus
             }
 
             return config;
+        }
+
+        static readonly ILog Logger = LogManager.GetLogger(typeof(ConfigureDistributor));
+
+        public static void DistributorInitialize(bool withWorker)
+        {
+            var config = Configure.Instance;
+
+            var applicativeInputQueue = Address.Local.SubScope("worker");
+
+            config.Configurer.ConfigureComponent<UnicastBus>(DependencyLifecycle.SingleInstance)
+                .ConfigureProperty(r => r.InputAddress, applicativeInputQueue)
+                .ConfigureProperty(r => r.DoNotStartTransport, !withWorker);
+
+            if (!config.Configurer.HasComponent<IWorkerAvailabilityManager>())
+            {
+                config.Configurer.ConfigureComponent<MsmqWorkerAvailabilityManager>(
+                    DependencyLifecycle.SingleInstance)
+                    .ConfigureProperty(r => r.StorageQueueAddress, Address.Local.SubScope("distributor.storage"));
+            }
+
+            SettingsHolder.Set("Distributor.Enabled", true);
+            SettingsHolder.Set("Distributor.Version", 1);
+
+            Logger.InfoFormat("Endpoint configured to host the distributor, applicative input queue re routed to {0}",
+                              applicativeInputQueue);
         }
 
         /// <summary>

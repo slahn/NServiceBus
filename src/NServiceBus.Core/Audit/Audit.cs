@@ -13,8 +13,6 @@
         
         public override void Initialize()
         {
-            base.Initialize();
-
             // If Audit feature is enabled and the value not specified via config and instead specified in the registry:
             // Log a warning when running in the debugger to remind user to make sure the 
             // production machine will need to have the required registry setting.

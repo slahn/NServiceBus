@@ -78,7 +78,7 @@
         {
             public Subscriber1()
             {
-                EndpointSetup<DefaultServer>(c => Configure.Features.Disable<AutoSubscribe>())
+                EndpointSetup<DefaultServer>(c => Feature.Disable<AutoSubscribe>())
                     .AddMapping<MyEvent>(typeof (Publisher))
                     .CustomMachineName(Server1)
                     .CustomEndpointName("MyEndpoint");
@@ -98,7 +98,7 @@
         {
             public Subscriber2()
             {
-                EndpointSetup<DefaultServer>(c => Configure.Features.Disable<AutoSubscribe>())
+                EndpointSetup<DefaultServer>(c => Feature.Disable<AutoSubscribe>())
                         .AddMapping<MyEvent>(typeof(Publisher))
                         .CustomMachineName(Server2)
                         .CustomEndpointName("MyEndpoint");

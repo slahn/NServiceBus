@@ -52,7 +52,7 @@
         {
             public InMemoryEndpoint()
             {
-                EndpointSetup<DefaultServer>(c => Configure.Features.Disable<AutoSubscribe>());
+                EndpointSetup<DefaultServer>(c => Feature.Disable<AutoSubscribe>());
             }
 
         }

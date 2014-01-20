@@ -12,8 +12,9 @@
             ForAllTypes<Feature>(t =>
                 {
                     var feature = (Feature)Activator.CreateInstance(t);
+                    feature.SetConfigurator(this);
 
-                    if (feature.IsEnabledByDefault && !Feature.IsEnabled(t))
+                    if (feature.IsEnabledByDefault && !FeatureRegistrar.IsEnabled(t))
                     {
                         Logger.InfoFormat("Default feature {0} has been explicitly disabled", feature.Name);
                         return;
@@ -21,7 +22,7 @@
 
                     if (feature.IsEnabledByDefault && !feature.ShouldBeEnabled())
                     {
-                        Feature.Disable(t);
+                        FeatureRegistrar.Disable(t);
                         Logger.DebugFormat("Default feature {0} disabled", feature.Name);
                     }
                 });
@@ -48,7 +49,7 @@
                         return;
                     }
 
-                    if (!Feature.IsEnabled(t))
+                    if (!FeatureRegistrar.IsEnabled(t))
                     {
                         statusText.AppendLine(string.Format("{0} - Disabled", feature));
                         return;

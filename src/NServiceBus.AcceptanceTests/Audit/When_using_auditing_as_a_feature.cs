@@ -4,6 +4,7 @@ namespace NServiceBus.AcceptanceTests.Audit
     using System;
     using EndpointTemplates;
     using AcceptanceTesting;
+    using Features;
     using NUnit.Framework;
 
     public class When_using_auditing_as_a_feature : NServiceBusAcceptanceTest
@@ -48,7 +49,7 @@ namespace NServiceBus.AcceptanceTests.Audit
                 // Although the AuditTo seems strange here, this test tries to fake the scenario where
                 // even though the user has specified audit config, because auditing is explicitly turned
                 // off, no messages should be audited.
-                EndpointSetup<DefaultServer>(c => Configure.Features.Disable<Features.Audit>())
+                EndpointSetup<DefaultServer>(c => Feature.Disable<Audit>())
                     .AuditTo<EndpointThatHandlesAuditMessages>();
 
             }

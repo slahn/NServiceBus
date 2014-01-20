@@ -23,7 +23,7 @@ namespace NServiceBus.Unicast.Config
 
             ConfigureMessageRegistry(knownMessages);
 
-            if (SettingsHolder.GetOrDefault<bool>("UnicastBus.AutoSubscribe"))
+            if (Settings.SettingsHolder.GetOrDefault<bool>("UnicastBus.AutoSubscribe"))
             {
                 InfrastructureServices.Enable<IAutoSubscriptionStrategy>();
             }
@@ -35,9 +35,9 @@ namespace NServiceBus.Unicast.Config
             var router = new StaticMessageRouter(knownMessages);
             var key = typeof(DefaultAutoSubscriptionStrategy).FullName + ".SubscribePlainMessages";
 
-            if (SettingsHolder.HasSetting(key))
+            if (Settings.SettingsHolder.HasSetting(key))
             {
-                router.SubscribeToPlainMessages = SettingsHolder.Get<bool>(key);
+                router.SubscribeToPlainMessages = Settings.SettingsHolder.Get<bool>(key);
             }
 
             RegisterInstance(router, DependencyLifecycle.SingleInstance);
@@ -86,7 +86,7 @@ namespace NServiceBus.Unicast.Config
         {
             var messageRegistry = new MessageMetadataRegistry
             {
-                DefaultToNonPersistentMessages = !SettingsHolder.Get<bool>("Endpoint.DurableMessages")
+                DefaultToNonPersistentMessages = !Settings.SettingsHolder.Get<bool>("Endpoint.DurableMessages")
             };
 
             knownMessages.ForEach(messageRegistry.RegisterMessageType);

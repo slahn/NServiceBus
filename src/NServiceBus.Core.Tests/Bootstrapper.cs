@@ -17,7 +17,20 @@
 
         public class MyBootStrapper : NServiceBusBootstrapper
         {
-            
+            public MyBootStrapper()
+            {
+                PurgeOnStartup(false);
+                Serialization.Json();
+
+            }
+        }
+    }
+
+    static class FooBar
+    {
+        public static void ScanAssemblies(this NServiceBusBootstrapper b, string[] assemblies)
+        {
+            b["sdds"] = assemblies;
         }
     }
 }

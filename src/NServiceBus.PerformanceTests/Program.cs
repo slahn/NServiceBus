@@ -18,7 +18,7 @@
     {
         static void Main(string[] args)
         {
-            TransportConnectionString.Override(() => "deadLetter=false;journal=false");
+            TransportConnectionStringRetriever.Override(() => "deadLetter=false;journal=false");
 
             var testCaseToRun = args[0];
 
@@ -79,11 +79,11 @@
                     throw new InvalidOperationException("Illegal serialization format " + args[2]);
             }
 
-            Configure.Features.Disable<Audit>();
+            Feature.Disable<Audit>();
 
             if (saga)
             {
-                Configure.Features.Enable<Sagas>();
+                Feature.Enable<Sagas>();
 
                 config.RavenSagaPersister();
             }

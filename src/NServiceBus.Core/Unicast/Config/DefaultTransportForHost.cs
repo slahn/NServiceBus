@@ -15,7 +15,7 @@ namespace NServiceBus.Unicast.Config
                 return;
             }
 
-            if(SettingsHolder.GetOrDefault<TransportDefinition>("NServiceBus.Transport.SelectedTransport") != null)
+            if(Settings.SettingsHolder.GetOrDefault<TransportDefinition>("NServiceBus.Transport.SelectedTransport") != null)
             {
                 return;
             }

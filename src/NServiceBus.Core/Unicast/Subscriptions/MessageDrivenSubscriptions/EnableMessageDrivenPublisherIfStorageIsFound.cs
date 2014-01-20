@@ -13,7 +13,7 @@
         {
             if (IsRegistered<ISubscriptionStorage>())
             {
-                Feature.Enable<StorageDrivenPublisher>();
+                Features.Enable<StorageDrivenPublisher>();
                 Logger.InfoFormat("ISubscriptionStorage found in the container. The message driven publisher feature will be activeated");
             }
                 

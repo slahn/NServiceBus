@@ -16,7 +16,7 @@
             DoNotWrapHandlersExecutionInATransactionScope = SettingsHolder.Get<bool>("Transactions.DoNotWrapHandlersExecutionInATransactionScope");
         }
 
-        protected TransactionSettings(bool isTransactional, TimeSpan transactionTimeout, IsolationLevel isolationLevel, int maxRetries, bool dontUseDistributedTransactions, bool doNotWrapHandlersExecutionInATransactionScope)
+        TransactionSettings(bool isTransactional, TimeSpan transactionTimeout, IsolationLevel isolationLevel, int maxRetries, bool dontUseDistributedTransactions, bool doNotWrapHandlersExecutionInATransactionScope)
         {
             IsTransactional = isTransactional;
             TransactionTimeout = transactionTimeout;

@@ -7,6 +7,7 @@
     using System.Reflection;
     using Config.ConfigurationSource;
     using DataBus.InMemory;
+    using Features;
     using Features.Categories;
     using MessageInterfaces;
     using Saga;
@@ -65,9 +66,9 @@
             if (initialized)
                 return;
 
-            Serializers.SetDefault<Features.XmlSerialization>();
+            Serializers.SetDefault<XmlSerialization>();
 
-            Configure.Features.Disable<Features.Audit>();
+            Feature.Disable<Audit>();
 
             Configure.Instance
                 .DefineEndpointName("UnitTests")

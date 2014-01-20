@@ -11,7 +11,7 @@ namespace NServiceBus.Distributor.MSMQ.Config
                 return;
             }
 
-            SettingsHolder.SetDefault("SecondLevelRetries.AddressOfRetryProcessor", Configure.Instance.GetMasterNodeAddress().SubScope("Retries"));
+            Settings.SettingsHolder.SetDefault("SecondLevelRetries.AddressOfRetryProcessor", Configure.Instance.GetMasterNodeAddress().SubScope("Retries"));
         }
     }
 }

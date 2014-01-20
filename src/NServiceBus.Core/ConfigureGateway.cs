@@ -1,91 +1,91 @@
 namespace NServiceBus
 {
     using System;
-    using Features;
     using Gateway.Deduplication;
     using Gateway.Persistence;
     using Gateway.Persistence.Raven;
-    using Persistence.Raven;
 
-    public static class ConfigureGateway
+    class ConfigureGateway : Configurator
+    {
+        public override void RegisterTypes()
+        {
+            if (Bootstrapper["gateway.persistence"] != null)
+            {
+                Register((Type) Bootstrapper["gateway.persistence"], DependencyLifecycle.SingleInstance);
+            }
+
+            if (Bootstrapper["gateway.deduplication"] != null)
+            {
+                Register((Type) Bootstrapper["gateway.deduplication"], DependencyLifecycle.SingleInstance);
+            }
+        }
+    }
+
+    public abstract partial class NServiceBusBootstrapper
     {
         /// <summary>
-        /// The Gateway is turned on by default for the Master role. Call DisableGateway method to turn the Gateway off.
+        ///     The Gateway is turned on by default for the Master role. Call DisableGateway method to turn the Gateway off.
         /// </summary>
-        public static Configure DisableGateway(this Configure config)
+        public void DisableGateway()
         {
-            Feature.Disable<Features.Gateway>();
-            return config;
+            Features.Disable<Features.Gateway>();
         }
 
         /// <summary>
-        /// Configuring to run the Gateway. By default Gateway will use RavenPersistence (see GatewayDefaults class).
+        ///     Configuring to run the Gateway. By default Gateway will use RavenPersistence.
         /// </summary>
-        public static Configure RunGateway(this Configure config)
+        public void RunGateway()
         {
-            Feature.Enable<Features.Gateway>();
-
-            return config;
+            Features.Enable<Features.Gateway>();
         }
 
-        public static Configure RunGatewayWithInMemoryPersistence(this Configure config)
+        public void RunGatewayWithInMemoryPersistence()
         {
-            return RunGateway(config, typeof(InMemoryPersistence));
+            RunGateway<InMemoryPersistence>();
         }
 
-        public static Configure RunGatewayWithRavenPersistence(this Configure config)
+        public void RunGatewayWithRavenPersistence()
         {
-            return RunGateway(config, typeof(RavenDbPersistence));
+            RunGateway<RavenDbPersistence>();
         }
 
-        public static Configure RunGateway(this Configure config, Type persistence)
+        public void RunGateway<TPersistence>() where TPersistence : IPersistMessages
         {
-            config.Configurer.ConfigureComponent(persistence, DependencyLifecycle.SingleInstance);
-            Feature.Enable<Features.Gateway>();
-            return config;
+            data["gateway.persistence"] = typeof(TPersistence);
+
+            RunGateway();
         }
 
         /// <summary>
-        /// Use the in memory messages persistence by the gateway.
+        ///     Use the in memory messages persistence by the gateway.
         /// </summary>
-        public static Configure UseInMemoryGatewayPersister(this Configure config)
+        public void UseInMemoryGatewayPersister()
         {
-            config.Configurer.ConfigureComponent<InMemoryPersistence>(DependencyLifecycle.SingleInstance);
-            return config;
+            data["gateway.persistence"] = typeof(InMemoryPersistence);
         }
 
         /// <summary>
-        /// Use in-memory message deduplication for the gateway.
+        ///     Use in-memory message deduplication for the gateway.
         /// </summary>
-        public static Configure UseInMemoryGatewayDeduplication(this Configure config)
+        public void UseInMemoryGatewayDeduplication()
         {
-            config.Configurer.ConfigureComponent<InMemoryDeduplication>(DependencyLifecycle.SingleInstance);
-            return config;
-        }
-
-
-        /// <summary>
-        /// Use RavenDB messages persistence by the gateway.
-        /// </summary>
-        public static Configure UseRavenGatewayPersister(this Configure config)
-        {
-            if (!config.Configurer.HasComponent<StoreAccessor>())
-                config.RavenPersistence();
-
-            config.Configurer.ConfigureComponent<RavenDbPersistence>(DependencyLifecycle.SingleInstance);
-            return config;
+            data["gateway.deduplication"] = typeof(InMemoryDeduplication);
         }
 
         /// <summary>
-        /// Use RavenDB for message deduplication by the gateway.
+        ///     Use RavenDB messages persistence by the gateway.
         /// </summary>
-        public static Configure UseRavenGatewayDeduplication(this Configure config)
+        public void UseRavenGatewayPersister()
         {
-            if (!config.Configurer.HasComponent<StoreAccessor>())
-                config.RavenPersistence();
+            data["gateway.persistence"] = typeof(RavenDbPersistence);
+        }
 
-            config.Configurer.ConfigureComponent<RavenDBDeduplication>(DependencyLifecycle.SingleInstance);
-            return config;
+        /// <summary>
+        ///     Use RavenDB for message deduplication by the gateway.
+        /// </summary>
+        public void UseRavenGatewayDeduplication()
+        {
+            data["gateway.deduplication"] = typeof(RavenDBDeduplication);
         }
     }
 }

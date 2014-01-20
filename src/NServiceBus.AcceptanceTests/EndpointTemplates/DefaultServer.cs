@@ -6,6 +6,7 @@
     using System.Reflection;
     using AcceptanceTesting.Support;
     using Config.ConfigurationSource;
+    using Features;
     using Hosting.Helpers;
     using NServiceBus;
     using Settings;
@@ -23,7 +24,7 @@
 
             var transportToUse = settings.GetOrNull("Transport");
 
-            Configure.Features.Enable<Features.Sagas>();
+            Feature.Enable<Sagas>();
 
             SettingsHolder.SetDefault("ScaleOut.UseSingleBrokerQueue", true);
 

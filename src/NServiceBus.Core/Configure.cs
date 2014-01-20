@@ -185,12 +185,6 @@ namespace NServiceBus
         }
 
         /// <summary>
-        /// True if this endpoint is operating in send only mode.
-        /// </summary>
-        [ObsoleteEx(TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0")]
-        public static bool SendOnlyMode { get { return SettingsHolder.Get<bool>("Endpoint.SendOnly"); } }
-
-        /// <summary>
         /// Creates a new configuration object scanning assemblies in the regular runtime directory.
         /// </summary>
         public static Configure With()
@@ -199,15 +193,6 @@ namespace NServiceBus
                 return With(HttpRuntime.BinDirectory);
 
             return With(AppDomain.CurrentDomain.BaseDirectory);
-        }
-
-        /// <summary>
-        /// Configures NServiceBus to scan for assemblies in the relevant web directory instead of regular runtime directory.
-        /// </summary>
-        [ObsoleteEx(Replacement = "With()", TreatAsErrorFromVersion = "4.0", RemoveInVersion = "5.0")]
-        public static Configure WithWeb()
-        {
-            return With();
         }
 
         /// <summary>

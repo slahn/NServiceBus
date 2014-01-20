@@ -5,7 +5,7 @@ namespace NServiceBus.Transports
     /// </summary>
     public interface IConfigureTransport
     {
-        void Configure(Configure config);
+        void Configure(Configurator config);
     }
 
 

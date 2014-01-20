@@ -96,13 +96,17 @@
     <Compile Include="AutomaticSubscriptions\AutoSubscriber.cs" />
     <Compile Include="AutomaticSubscriptions\Config\AutoSubscribeSettingsExtensions.cs" />
     <Compile Include="AutomaticSubscriptions\Config\AutoSubscribeSettings.cs" />
+    <Compile Include="Bus.cs" />
+    <Compile Include="BusImpl.cs" />
     <Compile Include="CircuitBreakers\ICircuitBreaker.cs" />
+    <Compile Include="Configurator.cs" />
     <Compile Include="Config\INeedInitialization.cs" />
+    <Compile Include="FeatureRegistrar.cs" />
+    <Compile Include="Features\FeatureCategory.cs" />
     <Compile Include="NServiceBusBootstrapper.cs" />
     <Compile Include="Configure.cs" />
     <Compile Include="Config\AuditConfig.cs" />
     <Compile Include="Config\WindowsInstallerRunner.cs" />
-    <Compile Include="Distributor\Config\DistributorInitializer.cs" />
     <Compile Include="Distributor\Config\WorkerInitializer.cs" />
     <Compile Include="Distributor\DistributorReadyMessageProcessor.cs" />
     <Compile Include="Distributor\DistributorSatellite.cs" />
@@ -589,7 +593,7 @@
     <Compile Include="Unicast\Transport\TransportReceiver.cs" />
     <Compile Include="Unicast\Transport\TransactionSettings.cs" />
     <Compile Include="Unicast\Transport\TransportMessageAvailableEventArgs.cs" />
-    <Compile Include="Unicast\Transport\TransportConnectionString.cs" />
+    <Compile Include="Unicast\Transport\TransportConnectionStringRetriever.cs" />
     <Compile Include="Unicast\Transport\TransportMessageHandlingFailedException.cs" />
     <Compile Include="Unicast\Transport\TransportMessageReceivedEventArgs.cs" />
     <Compile Include="Unicast\UnicastBus.cs" />
