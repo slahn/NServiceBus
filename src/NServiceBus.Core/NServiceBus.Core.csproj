@@ -137,6 +137,7 @@
     <Compile Include="Licensing\NonLockingFileReader.cs" />
     <Compile Include="Licensing\StaThreadRunner.cs" />
     <Compile Include="Licensing\LicenseExpiredFormDisplayer.cs" />
+    <Compile Include="MessageInterfaces\MessageMapper\Reflection\ProxyBuilder.cs" />
     <Compile Include="Outbox\IOutboxStorage.cs" />
     <Compile Include="Outbox\Outbox.cs" />
     <Compile Include="Outbox\OutboxMessage.cs" />

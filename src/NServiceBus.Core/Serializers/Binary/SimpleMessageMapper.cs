@@ -1,7 +1,6 @@
 namespace NServiceBus.Serializers.Binary
 {
     using System;
-    using System.Collections.Generic;
     using MessageInterfaces;
 
     /// <summary>
@@ -29,10 +28,6 @@ namespace NServiceBus.Serializers.Binary
                 throw new NotSupportedException("The binary serializer does not support interface types. Please use the XML serializer if you need this functionality.");
 
             return Activator.CreateInstance(messageType);
-        }
-
-        void IMessageMapper.Initialize(IEnumerable<Type> types)
-        {
         }
 
         Type IMessageMapper.GetMappedTypeFor(Type t)

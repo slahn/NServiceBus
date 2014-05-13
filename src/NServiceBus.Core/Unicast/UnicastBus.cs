@@ -10,6 +10,7 @@ namespace NServiceBus.Unicast
     using Licensing;
     using Logging;
     using MessageInterfaces;
+    using MessageInterfaces.MessageMapper.Reflection;
     using Messages;
     using ObjectBuilder;
     using Pipeline;
@@ -303,14 +304,33 @@ namespace NServiceBus.Unicast
             return SendMessage(new SendOptions(Address.Local), LogicalMessageFactory.Create(message));
         }
 
+        internal ProxyBuilder ProxyBuilder { get; set; }
+
+        object 
+
         public ICallback Send<T>(Action<T> messageConstructor)
         {
-            return Send(messageMapper.CreateInstance(messageConstructor));
+            var type = ProxyBuilder.GetProxyForInterface(typeof(T));
+            var instance = (T)Activator.CreateInstance(type);
+            messageConstructor(instance);
+
+            var destination = GetDestinationForSend(typeof(T));
+
+            var logicalMessage = LogicalMessageFactory.Create(typeof(T), instance);
+            return SendMessage(new SendOptions(destination), logicalMessage);
+
         }
 
         public ICallback Send(object message)
         {
-            var destinations =  GetAddressForMessageType(message.GetType())
+            var destination = GetDestinationForSend(message.GetType());
+
+            return SendMessage(new SendOptions(destination), LogicalMessageFactory.Create(message));
+        }
+
+        Address GetDestinationForSend(Type messageType)
+        {
+            var destinations = GetAddressForMessageType(messageType)
                 .Distinct()
                 .ToList();
 
@@ -320,8 +340,7 @@ namespace NServiceBus.Unicast
             }
 
             var destination = destinations.SingleOrDefault();
-
-            return SendMessage(new SendOptions(destination), LogicalMessageFactory.Create(message));
+            return destination;
         }
 
         public ICallback Send<T>(string destination, Action<T> messageConstructor)
@@ -743,11 +762,6 @@ namespace NServiceBus.Unicast
             });
         }
 
-        /// <summary>
-        /// Gets the destination address For a message type.
-        /// </summary>
-        /// <param name="messageType">The message type to get the destination for.</param>
-        /// <returns>The address of the destination associated with the message type.</returns>
         List<Address> GetAddressForMessageType(Type messageType)
         {
             var destination = MessageRouter.GetDestinationFor(messageType);
@@ -755,15 +769,6 @@ namespace NServiceBus.Unicast
             if (destination.Any())
             {
                 return destination;
-            }
-
-            if (messageMapper != null && !messageType.IsInterface)
-            {
-                var t = messageMapper.GetMappedTypeFor(messageType);
-                if (t != null && t != messageType)
-                {
-                    return GetAddressForMessageType(t);
-                }
             }
 
             return destination;
@@ -807,7 +812,7 @@ namespace NServiceBus.Unicast
 
         IList<IWantToRunWhenBusStartsAndStops> thingsToRunAtStartup;
 
-        IMessageMapper messageMapper;
+        //IMessageMapper messageMapper;
         Task[] thingsToRunAtStartupTask = new Task[0];
         SatelliteLauncher satelliteLauncher;
 

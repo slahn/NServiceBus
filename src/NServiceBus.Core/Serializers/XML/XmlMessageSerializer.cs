@@ -13,6 +13,7 @@ namespace NServiceBus.Serializers.XML
     using System.Xml.Serialization;
     using Logging;
     using MessageInterfaces;
+    using MessageInterfaces.MessageMapper.Reflection;
     using Serialization;
     using Utils.Reflection;
 
@@ -1416,7 +1417,7 @@ namespace NServiceBus.Serializers.XML
         /// Initializes an instance of a <see cref="XmlMessageSerializer"/>.
         /// </summary>
         /// <param name="mapper">Message Mapper</param>
-        public XmlMessageSerializer(IMessageMapper mapper)
+        public XmlMessageSerializer(MessageMapper mapper)
         {
             this.mapper = mapper;
         }

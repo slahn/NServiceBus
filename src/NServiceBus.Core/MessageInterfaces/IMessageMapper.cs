@@ -1,7 +1,6 @@
 namespace NServiceBus.MessageInterfaces
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Enables looking up interfaced mapped to generated concrete types.
@@ -16,7 +15,7 @@ namespace NServiceBus.MessageInterfaces
         /// <summary>
         /// Initializes the mapper with the given types to be scanned.
         /// </summary>
-        void Initialize(IEnumerable<Type> types);
+        //void Initialize(IEnumerable<Type> types);
 
         /// <summary>
         /// If the given type is an interface, returns the generated concrete type.

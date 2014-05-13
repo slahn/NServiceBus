@@ -11,6 +11,7 @@ namespace NServiceBus.MessageInterfaces.MessageMapper.Reflection
     using Logging;
     using Utils.Reflection;
 
+
     /// <summary>
     /// Uses reflection to map between interfaces and their generated concrete implementations.
     /// </summary>
