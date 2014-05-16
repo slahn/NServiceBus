@@ -20,9 +20,26 @@
         /// </summary>
         public void Startup(Configure config)
         {
+            WcfBaseAddresses baseAddresses = null;
+            if (Configure.Instance.Configurer.HasComponent<WcfBaseAddresses>())
+            {
+                baseAddresses = Configure.Instance.Builder.Build<WcfBaseAddresses>();
+            }
+
             foreach (var serviceType in config.TypesToScan.Where(t => !t.IsAbstract && IsWcfService(t)))
             {
-                var host = new WcfServiceHost(serviceType);
+                WcfServiceHost host;
+                if(baseAddresses != null) {
+                    host = new WcfServiceHost(serviceType, 
+                        baseAddresses.Addresses
+                        .Select(b => new Uri(b.AbsoluteUri + "/" + serviceType.Name))
+                        .ToArray());
+                }
+                else
+                {
+                    host = new WcfServiceHost(serviceType);
+                }
+
 
                 Binding binding = new BasicHttpBinding();
 

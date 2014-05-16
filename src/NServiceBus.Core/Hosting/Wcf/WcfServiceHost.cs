@@ -21,6 +21,15 @@ namespace NServiceBus.Hosting.Wcf
 
         }
 
+        /// <summary>
+        /// Constructs the host with the given service type and base URIs
+        /// </summary>
+        public WcfServiceHost(Type t, Uri[] bases)
+            : base(t, bases)
+        {
+           
+        }
+
 
         /// <summary>
         /// Adds the given endpoint unless its already configured in app.config
